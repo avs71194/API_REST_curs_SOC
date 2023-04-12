@@ -1,11 +1,11 @@
 #!/usr/bin/python3
 
 class App_tasques():
-    def __init(self):
+    def __init__(self):
         self._llista = []
 
-    def afeguir_tasca(self, tasca_nova):
+    def afegueix_tasca(self, tasca_nova):
         self._llista.append(tasca_nova)
 
-    def lleguir_tasques(self):
+    def llegir_tasques(self):
         return self._llista
