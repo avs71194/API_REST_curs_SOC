@@ -27,4 +27,4 @@ def tasks():
     
 app.run(host="0.0.0.0")
 
-# curl -d'{title: "méteme el dedo en el culo"}' -H "Content-type: application/json" 192.168.3.120:5000/tasks
+# curl -d'{title: "Barrer el cuarto de las ratas"}' -H "Content-type: application/json" 192.168.3.120:5000/tasks
