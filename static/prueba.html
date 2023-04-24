@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        * {
+            font-family: 'Courier New', Courier, monospace;
+        }
+        .el_meu_p:hover {
+            background-color: rgb(233, 225, 188);
+            font-family: Impact;
+        }
+    </style>
+    <script>
+        function llegeix_tasques(){
+            fetch("http://localhost:5000/tasks", {
+                    method: 'GET'
+                })
+                .then((response) => response.json())
+                .then((data) => {
+                    console.log("Success:", data);
+                    tasques = data;
+                    tasques.array.forEach(element => {
+                        (item, index, array) => {
+                            escriu_llista(item["titol"]);}
+                        }
+                    })
+                    //mostrar_tasques_locals();
+                }
+                .catch((error) => {
+                    console.error("Error:", error);
+                });
+        }
+
+        function escriu_llista(text_a_escriure){
+            la_meva_llista = document.getElementById("llista");
+            un_parragraf = document.createElement("p");
+            la_meva_llista.appendChild(un_parragraf);
+            un_parragraf.innerText = text_a_escriure;
+        }
+    </script>
+</head>
+<body onload="llegeix_tasques()">
+    <div id="llista"></div>
+    <form><input type="text" placeholder="escriu aquí el teu nom"  /> </form>
+    <p class="el_meu_p" id="p_salut" onclick="escriu_llista('MARIXOXOOOOO')">
+Hola
+    </p>
+    <p class="el_meu_p">
+Adeu
+    </p>
+    <p onclick="escriu_llista('A2 Xoxooo')">Com estàs?</p>
+</body>
+</html>
