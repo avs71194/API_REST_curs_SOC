@@ -1,12 +1,36 @@
 #!/usr/bin/python3
 import persistencia_tasca_sqlite
+import persistencia_tasca_mysql
+import json
 
 RUTA_BD = "todo_list.db"
 
 class App_tasques():
     def __init__(self):
-        self._persistencia_tasques = persistencia_tasca_sqlite.Persistencia_tasca_sqlite(RUTA_BD)
+        config = self.llegeix_configuracio()
+        self._database = "sqlite"
+        try:
+            self._database = config["database"]
+        except:
+            print(f"Base de dades: {self._database}")
+            self._database = None
+        if self._database == "sqlite":
+            self._persistencia_tasques = persistencia_tasca_sqlite.Persistencia_tasca_sqlite(RUTA_BD)
+        elif self._database == "mysql":
+            self._persistencia_tasques = persistencia_tasca_mysql.Persistencia_tasca_mysql()
+        else:
+            raise Exception("Base de dades no reconeguda")
 
+    def llegeix_configuracio(self):
+        ruta_config = "./config.json"
+        resultat = {}
+        try:
+            with open(ruta_config) as f:
+                resultat = json.load(ruta_config)
+        except BaseException as ex:
+            print("No he trobat el fitxer de configuracio")
+        return resultat
+    
     def afegueix_tasca(self, tasca_nova):
         tasca_nova.persistencia = self._persistencia_tasques
         tasca_nova.desa()
