@@ -1,9 +1,10 @@
 #!/usr/bin/python3
+import uuid
 import persistencia_tasca_sqlite
 import persistencia_tasca_mysql
 import persistencia_usuario_mysql
 import usuario
-import json
+import json, bcrypt
 
 RUTA_BD = "todo_list.db"
 
@@ -54,6 +55,15 @@ class App_tasques():
     def esborra_tasca(self,id):
         return self._persistencia_tasques.esborra_tasca(id)
     
-    def llegeix_amb_nick(self,nick, password):
+    def login(self,nick, password):
         usuari_passat_pel_client = usuario.Usuario(self._persistencia_usuaris, None, nick, password)
         usuari_de_base_dades = usuari_passat_pel_client.llegeix_amb_nick()
+        if not usuari_de_base_dades:
+            return None
+        comparacio = bcrypt.checkpw(password.encode('utf-8'), usuari_de_base_dades.password.encode('utf-8'))
+        if comparacio:
+            api_key = uuid.uuid4()
+            usuari_de_base_dades.desa_api_key(api_key)
+            return api_key
+        return None
+            

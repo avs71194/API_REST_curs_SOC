@@ -39,7 +39,7 @@ class Persistencia_usuario_mysql():
         return resultat
     
     def llegeix_amb_nick(self, nick):
-        consulta = f"SELECT id, password_hash FROM usuaris WHERE nick = '{nick}';"
+        consulta = f"SELECT id, password_hash, nom FROM usuaris WHERE nick = '{nick}';"
         cursor = self._conn.cursor(buffered=True)
         nou_usuari = None
         cursor.execute(consulta)
@@ -47,7 +47,7 @@ class Persistencia_usuario_mysql():
         cursor.reset()
         cursor.close()
         if dades:
-            nou_usuari = usuario.Usuario(self, None, nick, dades[1], dades[8])
+            nou_usuari = usuario.Usuario(self, dades[2], nick, dades[1], dades[0])
         return nou_usuari
     
     def calcula_hash(self, password):
@@ -55,6 +55,20 @@ class Persistencia_usuario_mysql():
         sal = bcrypt.gensalt()
         hash = bcrypt.hashpw(bytes, sal)
         return hash
+    
+    def desa_api_key(self, usuari, api_key):
+        consulta = f"INSERT INTO sessions (usuari, api_key) VALUES({usuari.id}, '{api_key}');"
+        cursor = self._conn.cursor(buffered=True)
+        try:
+            cursor.execute(consulta)
+            self._conn.commit()
+            resultat = True
+        except:
+            print("[X] Nohem pogut inserir la API key a la base de dades;")
+            resultat = False
+        cursor.reset()
+        cursor.close()
+        return resultat
     
     def existeixen_taules(self):
         consulta_1 = "SELECT * FROM usuaris LIMIT 1;"
