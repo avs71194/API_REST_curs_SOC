@@ -4,6 +4,7 @@ import flask
 import app_tasques
 import tasca
 import json
+import usuario
 
 app = flask.Flask(__name__)
 core_app = app_tasques.App_tasques()
@@ -35,7 +36,21 @@ def tasks():
             tasca_diccionaty = json.loads(tasca_json)
             llista_jsons.append(tasca_diccionaty)
         return flask.jsonify(llista_jsons), 200
-    
+
+@app.route('/registre', methods=['POST'])
+def registre():
+    info_body = flask.request.get.data()
+    usuari_nou = json.loads(info_body)
+    objecte_usuari = usuario.Usuario(
+        None, usuari_nou["nom"],
+        usuari_nou["nick"],
+        usuari_nou["password"]
+        )
+    resultat = core_app.registre(objecte_usuari)
+    if resultat:
+        return "", 201
+    return "", 400
+
 app.run(host="0.0.0.0")
 
 # curl -d'{title: "Barrer el cuarto de las ratas"}' -H "Content-type: application/json" 192.168.3.120:5000/tasks

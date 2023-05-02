@@ -1,6 +1,8 @@
 #!/usr/bin/python3
 import persistencia_tasca_sqlite
 import persistencia_tasca_mysql
+import persistencia_usuario_mysql
+import usuario
 import json
 
 RUTA_BD = "todo_list.db"
@@ -8,18 +10,26 @@ RUTA_BD = "todo_list.db"
 class App_tasques():
     def __init__(self):
         config = self.llegeix_configuracio()
-        self._database = "sqlite"
         try:
             self._database = config["database"]
         except:
-            print(f"Base de dades: {self._database}")
             self._database = None
+        print(f"Base de dades: {self._database}")
+        self._database = "mysql"
         if self._database == "sqlite":
             self._persistencia_tasques = persistencia_tasca_sqlite.Persistencia_tasca_sqlite(RUTA_BD)
+            self._presistencia_usuaris = None
+            raise NotImplementedError("Falta implementar la persistencia usuari per aquest SSGBD")
         elif self._database == "mysql":
             self._persistencia_tasques = persistencia_tasca_mysql.Persistencia_tasca_mysql()
+            self._persistencia_usuaris = persistencia_usuario_mysql.Persistencia_usuario_mysql()
         else:
             raise Exception("Base de dades no reconeguda")
+        
+    def registre(self, user):
+        nou_usuari = usuario.Usuario(self._persistencia_usuaris, user.nom, user.nick, user.password)
+        resultat = nou_usuari.desa()
+        return resultat
 
     def llegeix_configuracio(self):
         ruta_config = "./config.json"
@@ -43,3 +53,7 @@ class App_tasques():
     
     def esborra_tasca(self,id):
         return self._persistencia_tasques.esborra_tasca(id)
+    
+    def llegeix_amb_nick(self,nick, password):
+        usuari_passat_pel_client = usuario.Usuario(self._persistencia_usuaris, None, nick, password)
+        usuari_de_base_dades = usuari_passat_pel_client.llegeix_amb_nick()
